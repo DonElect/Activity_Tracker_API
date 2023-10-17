@@ -5,12 +5,14 @@ import com.donatus.activity_tracker_api.dto.clientDTO.ClientRegistrationDTO;
 import com.donatus.activity_tracker_api.dto.clientDTO.ClientResponseDTO;
 import com.donatus.activity_tracker_api.entity.ClientEntity;
 import com.donatus.activity_tracker_api.exception.ClientNotFoundException;
+import com.donatus.activity_tracker_api.exception.DuplicateEmailAddressException;
 import com.donatus.activity_tracker_api.exception.InvalidClientPasswordException;
 import com.donatus.activity_tracker_api.repository.ClientRepository;
 import com.donatus.activity_tracker_api.services.ClientServices;
 import com.donatus.activity_tracker_api.utils.ClientCheck;
 import com.donatus.activity_tracker_api.utils.mappers.ClientDTOMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import static com.donatus.activity_tracker_api.utils.PasswordHash.isPassword;
@@ -27,6 +29,9 @@ public class ClientServiceImpl implements ClientServices {
 
     @Override
     public ClientResponseDTO registerClient(ClientRegistrationDTO newClient) {
+        if (clientRepo.existsByEmail(newClient.getEmail())){
+            throw new DuplicateEmailAddressException("Email address already in database!");
+        }
         ClientEntity client = dtoMapper.registrationDTOMapper(newClient);
 
         ClientEntity savedClient = clientRepo.save(client);

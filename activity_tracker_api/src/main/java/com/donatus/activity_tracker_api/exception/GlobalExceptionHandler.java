@@ -47,4 +47,16 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorDetails, errorDetails.getStatus());
     }
 
+    @ExceptionHandler(DuplicateEmailAddressException.class)
+    public ResponseEntity<ErrorDetails> handleDuplicateEmailAddressException(final DuplicateEmailAddressException exception){
+        ErrorDetails errorDetails = ErrorDetails.builder()
+                .message(exception.getMessage())
+                .status(HttpStatus.BAD_REQUEST)
+                .debugMessage("Login or register with a new email")
+                .dateTime(LocalDateTime.now())
+                .build();
+
+        return new ResponseEntity<>(errorDetails, errorDetails.getStatus());
+    }
+
 }

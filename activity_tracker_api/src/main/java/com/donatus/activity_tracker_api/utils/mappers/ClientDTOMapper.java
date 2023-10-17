@@ -5,8 +5,12 @@ import com.donatus.activity_tracker_api.dto.clientDTO.ClientResponseDTO;
 import com.donatus.activity_tracker_api.entity.ClientEntity;
 import static com.donatus.activity_tracker_api.utils.PasswordHash.encryptPassword;
 
+import com.donatus.activity_tracker_api.entity.Roles;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -14,15 +18,16 @@ public class ClientDTOMapper implements ClientDTOMapperServices {
 
     @Override
     public ClientEntity registrationDTOMapper(ClientRegistrationDTO newClient){
+        Roles role = new Roles();
+        role.setName("USER");
         return ClientEntity.builder()
                 .firstName(newClient.getFirstName())
                 .lastName(newClient.getLastName())
                 .email(newClient.getEmail())
-                .password("{bcrypt}" + encryptPassword(newClient.getPassword()))
+                .password(encryptPassword(newClient.getPassword()))
                 .occupation(newClient.getOccupation())
                 .address(newClient.getAddress())
-                .role("ROLE_USER")
-                .active((byte) 1)
+                .roles(new ArrayList<>(List.of(role)))
                 .build();
     }
 

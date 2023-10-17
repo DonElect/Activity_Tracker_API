@@ -16,6 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 @Entity
 @Table(name = "clients")
 public class ClientEntity {
@@ -43,14 +44,22 @@ public class ClientEntity {
     @Column(name = "address", length = 100)
     private String address;
 
-    private String role = "USER";
-
-    @Column(name = "active", nullable = false)
-    private byte active;
-
     @OneToMany(mappedBy = "clientEntity", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<TaskEntity> tasksList;
 
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "client_id"),
+                inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+    private List<Roles> roles = new ArrayList<>();
+
+
+    public void addRole(Roles role){
+        if (roles == null){
+            roles = new ArrayList<>();
+        }
+
+        roles.add(role);
+    }
 
     public void addTask(TaskEntity task){
         if (tasksList == null){
